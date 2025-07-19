@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ job_name }}
+spec:
+  ttlSecondsAfterFinished: 60
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: runner
+        image: {{ image }}
+        imagePullPolicy: Never
+        command: ["/bin/sh", "-c"]
+        args: ["echo {{ code_b64 }} | base64 -d > /workspace/{{ filename }} && {{ run_cmd }} /workspace/{{ filename }}"]
+        volumeMounts:
+          - name: workspace
+            mountPath: /workspace
+        resources:
+          limits:
+            memory: {{ memory }}
+            cpu: {{ cpu }}
+        securityContext:
+          runAsNonRoot: true
+          readOnlyRootFilesystem: false
+          runAsUser: 1000
+      volumes:
+        - name: workspace
+          emptyDir: { }
