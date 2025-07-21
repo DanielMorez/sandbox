@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 if settings.debug:
     config.load_kube_config()
 else:
-    config.load_incluster_config(settings.kubeconfig)
+    config.load_incluster_config()
 
 batch = client.BatchV1Api()
 core = client.CoreV1Api()

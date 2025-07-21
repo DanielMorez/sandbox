@@ -1,0 +1,32 @@
+name: Sausage Store Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+
+jobs:
+  # Сборка и пуш образов в докерхаб:
+  build_and_push_to_docker_hub:
+      name: Push Docker image to DockerHub
+      runs-on: ubuntu-latest
+      steps:
+        - name: Check out the repo
+          uses: actions/checkout@v3
+
+        - name: Set up Docker Buildx
+          uses: docker/setup-buildx-action@v2
+
+        - name: Login to Docker 
+          uses: docker/login-action@v2
+          with:
+            username: ${{ secrets.DOCKER_USER }}
+            password: ${{ secrets.DOCKER_PASSWORD }}
+
+        - name: Push Backend Sandbox to DockerHub
+          uses: docker/build-push-action@v4
+          with:
+            context: ./docker/python/
+            push: true
+            tags: arturdzh/sandbox:latest
