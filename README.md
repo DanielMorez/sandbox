@@ -102,3 +102,12 @@ sandbox/
 ├── poetry.lock                         # Переменные окружения
 └── README.md
 ```
+
+
+Проверка работы:
+```
+curl --location 'http://158.160.170.194:30000/api/run/sync'   --header 'Content-Type: application/json'   --data '{
+    "language": "python",
+    "code": "a, b = 1, 2\nprint(a + b)"
+}'
+```

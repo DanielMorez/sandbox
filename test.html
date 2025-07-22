@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sandbox Runner</title>
+</head>
+<body>
+  <h1>Python Sandbox</h1>
+
+  <textarea id="codeInput" rows="10" cols="60" placeholder="Введите код здесь...">print("Hello, world!")</textarea>
+  <br>
+  <button onclick="sendRequest()">Run Code</button>
+
+  <h2>Output:</h2>
+  <pre id="output"></pre>
+
+  <script>
+    async function sendRequest() {
+      const code = document.getElementById("codeInput").value;
+
+      const response = await fetch('http://158.160.170.194:30000/api/run/sync', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          language: 'python',
+          code: code
+        })
+      });
+
+      const data = await response.text();
+      document.getElementById("output").textContent = data;
+    }
+  </script>
+</body>
+</html>
