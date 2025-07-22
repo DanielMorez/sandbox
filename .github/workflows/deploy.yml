@@ -31,3 +31,10 @@ jobs:
             file: ./deploy/Dockerfile
             push: true
             tags: arturdzh/sandbox:latest
+
+        - name: Push Sandbox for python to DockerHub
+          uses: docker/build-push-action@v4
+          with:
+            context: ./docker/python/
+            push: true
+            tags: arturdzh/sandbox-for-python:latest
