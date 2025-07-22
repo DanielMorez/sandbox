@@ -27,6 +27,7 @@ jobs:
         - name: Push Backend Sandbox to DockerHub
           uses: docker/build-push-action@v4
           with:
-            context: ./deploy/
+            context: .
+            file: ./deploy/Dockerfile
             push: true
             tags: arturdzh/sandbox:latest
