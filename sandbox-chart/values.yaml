@@ -11,4 +11,4 @@ resources:
     cpu: "300m"
 containerPort: 8000
 
-nodePort: 8000
+nodePort: 30000
