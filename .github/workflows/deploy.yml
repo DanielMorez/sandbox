@@ -10,6 +10,7 @@ env:
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
   SANDBOX_NAMESPACE: sandbox
   KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+  YC_SA_KEY_JSON: ${{ secrets.YC_SA_KEY_JSON }}
   CLUSTER_ID: cat210j0nqe29qff0mu7
   CLUSTER_ZONE: ru-central1-d
   CLUSTER_NAME: sandbox
@@ -65,7 +66,7 @@ jobs:
 
         - name: Auth to Yandex Cloud
           run: |
-            echo '${{ secrets.YC_SA_KEY_JSON }}' > key.json
+            echo '$YC_SA_KEY_JSON > key.json
             yc config set service-account-key key.json
             CLOUD_ID=$(jq -r .cloud_id key.json)
             FOLDER_ID=$(jq -r .folder_id key.json)
@@ -80,10 +81,6 @@ jobs:
             yc managed-kubernetes cluster get-credentials $CLUSTER_ID --external --force
             kubectl config set-context --current --namespace=$SANDBOX_NAMESPACE
             cat ~/.kube/config
-        
-        # - name: Apply RBAC for CI user
-        #   run: |
-        #     kubectl apply -f rbac-ci.yml
 
         - name: Install Helm
           uses: azure/setup-helm@v4

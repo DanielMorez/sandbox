@@ -106,7 +106,7 @@ sandbox/
 
 # Особенности деплоя 
 
-Добавлен workflow с реализацией пуша в DockerHub
+Добавлен workflow с реализацией пуша в DockerHub и в кластер kubernetes
 
 
 Kubernetes (Yandex cloud):
@@ -124,6 +124,7 @@ Kubernetes (Yandex cloud):
 ```
 git push
 ```
+(перед деплоеем в новый кластер применить kubectl apply -f rbac-ci.yml)
 ## Ручной деплой:
 ```
 helm upgrade --install sandbox .\sandbox-chart\ -n sandbox
