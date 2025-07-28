@@ -97,7 +97,7 @@ jobs:
         - name: Deploy Helm chart
           env:
             RELEASE_NAME: sandbox
-            CHART_NAME: sandbox
+            CHART_NAME: ./sandbox-chart
           run: |
             helm upgrade --install $RELEASE_NAME $CHART_NAME \
               --namespace $SANDBOX_NAMESPACE
