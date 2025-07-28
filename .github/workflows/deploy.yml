@@ -66,7 +66,7 @@ jobs:
 
         - name: Auth to Yandex Cloud
           run: |
-            echo '$YC_SA_KEY_JSON > key.json
+            echo "$YC_SA_KEY_JSON" > key.json
             yc config set service-account-key key.json
             CLOUD_ID=$(jq -r .cloud_id key.json)
             FOLDER_ID=$(jq -r .folder_id key.json)
