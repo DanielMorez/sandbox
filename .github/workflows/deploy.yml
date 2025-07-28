@@ -81,9 +81,9 @@ jobs:
             kubectl config set-context --current --namespace=$SANDBOX_NAMESPACE
             cat ~/.kube/config
         
-        - name: Apply RBAC for CI user
-          run: |
-            kubectl apply -f rbac-ci.yml
+        # - name: Apply RBAC for CI user
+        #   run: |
+        #     kubectl apply -f rbac-ci.yml
 
         - name: Install Helm
           uses: azure/setup-helm@v4
