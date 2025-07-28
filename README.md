@@ -105,8 +105,18 @@ sandbox/
 
 
 Проверка работы:
+Пример с NodePort + http:
 ```
 curl --location 'http://158.160.170.194:30000/api/run/sync'   --header 'Content-Type: application/json'   --data '{
+    "language": "python",
+    "code": "a, b = 1, 2\nprint(a + b)"
+}'
+```
+Пример с ingress + http + домен:
+```
+curl --location 'http://k8s.duginov.courses/api/run/sync' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
     "language": "python",
     "code": "a, b = 1, 2\nprint(a + b)"
 }'
