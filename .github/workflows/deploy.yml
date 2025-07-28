@@ -1,9 +1,15 @@
-name: Sausage Store Deploy
+name: Sandbox Deploy
 
 on:
   push:
     branches:
       - main
+
+env:
+  DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  SANDBOX_NAMESPACE: sandbox
+  KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
 
 
 jobs:
@@ -21,8 +27,8 @@ jobs:
         - name: Login to Docker 
           uses: docker/login-action@v2
           with:
-            username: ${{ secrets.DOCKER_USER }}
-            password: ${{ secrets.DOCKER_PASSWORD }}
+            username: $DOCKER_USER
+            password: $DOCKER_PASSWORD
 
         - name: Push Backend Sandbox to DockerHub
           uses: docker/build-push-action@v4
@@ -38,3 +44,34 @@ jobs:
             context: ./docker/python/
             push: true
             tags: arturdzh/sandbox-for-python:latest
+
+
+  deploy_helm_chart_to_kubernetes:
+      name: Deploy Helm Chart To Kubernetes
+      runs-on: ubuntu-latest
+      needs: build_and_push_to_docker_hub
+
+      steps:
+        - name: Install Helm
+          uses: azure/setup-helm@v4
+
+        # Добавляем kubeconfig (секретом)
+        - name: Set up kubeconfig
+          run: |
+            mkdir -p $HOME/.kube
+            echo "$KUBE_CONFIG" > $HOME/.kube/config
+            cat $HOME/.kube/config
+
+        # Проверим, что можем подключиться
+        - name: Test kubectl connection
+          run: |
+            kubectl get pods,deployments,services -n $SANDBOX_NAMESPACE
+
+        # Деплой чарта в Kubernetes
+        - name: Deploy Helm chart
+          env:
+            RELEASE_NAME: sandbox
+            CHART_NAME: sandbox
+          run: |
+            helm upgrade --install $RELEASE_NAME $CHART_NAME \
+              --namespace $SANDBOX_NAMESPACE
