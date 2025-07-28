@@ -10,6 +10,9 @@ env:
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
   SANDBOX_NAMESPACE: sandbox
   KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+  CLUSTER_ID: cat210j0nqe29qff0mu7
+  CLUSTER_ZONE: ru-central1-d
+  CLUSTER_NAME: sandbox
 
 
 jobs:
@@ -52,15 +55,28 @@ jobs:
       needs: build_and_push_to_docker_hub
 
       steps:
+        - name: Install Yandex CLI
+          run: |
+            curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+            echo "${HOME}/yandex-cloud/bin" >> $GITHUB_PATH
+
+        - name: Auth to Yandex Cloud
+          run: |
+            echo '${{ secrets.YC_SA_KEY_JSON }}' > key.json
+            yc config set service-account-key key.json
+            yc config set cloud-id $(yc resource-manager cloud get --name default --format json | jq -r .id)
+            yc config set folder-id $(yc resource-manager folder get --name default --format json | jq -r .id)
+            yc config set compute-default-zone $CLUSTER_ZONE
+
+        # Добавляем kubeconfig (секретом)    
+        - name: Generate kubeconfig
+          run: |
+            yc managed-kubernetes cluster get-credentials $CLUSTER_ID --external --force
+            kubectl config set-context --current --namespace=$SANDBOX_NAMESPACE
+            cat ~/.kube/config
+
         - name: Install Helm
           uses: azure/setup-helm@v4
-
-        # Добавляем kubeconfig (секретом)
-        - name: Set up kubeconfig
-          run: |
-            mkdir -p $HOME/.kube
-            echo "$KUBE_CONFIG" > $HOME/.kube/config
-            cat $HOME/.kube/config
 
         # Проверим, что можем подключиться
         - name: Test kubectl connection
