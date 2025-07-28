@@ -77,6 +77,10 @@ jobs:
             yc managed-kubernetes cluster get-credentials $CLUSTER_ID --external --force
             kubectl config set-context --current --namespace=$SANDBOX_NAMESPACE
             cat ~/.kube/config
+        
+        - name: Apply RBAC for CI user
+          run: |
+            kubectl apply -f rbac-ci.yaml
 
         - name: Install Helm
           uses: azure/setup-helm@v4
