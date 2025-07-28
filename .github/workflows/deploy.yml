@@ -83,8 +83,7 @@ jobs:
         
         - name: Apply RBAC for CI user
           run: |
-            ls
-            kubectl apply -f rbac-ci.yaml
+            kubectl apply -f rbac-ci.yml
 
         - name: Install Helm
           uses: azure/setup-helm@v4
