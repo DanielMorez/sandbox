@@ -57,7 +57,7 @@ jobs:
       steps:
         - name: Check out the repo
           uses: actions/checkout@v3
-          
+
         - name: Install Yandex CLI
           run: |
             curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
@@ -83,6 +83,7 @@ jobs:
         
         - name: Apply RBAC for CI user
           run: |
+            ls
             kubectl apply -f rbac-ci.yaml
 
         - name: Install Helm
