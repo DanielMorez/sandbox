@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: github-ci-admin
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+  - kind: User
+    name: ajeeef0u79h8jtncpis6
+    apiGroup: rbac.authorization.k8s.io
