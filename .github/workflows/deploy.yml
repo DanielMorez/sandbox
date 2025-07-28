@@ -64,8 +64,11 @@ jobs:
           run: |
             echo '${{ secrets.YC_SA_KEY_JSON }}' > key.json
             yc config set service-account-key key.json
-            yc config set cloud-id $(yc resource-manager cloud get --name default --format json | jq -r .id)
-            yc config set folder-id $(yc resource-manager folder get --name default --format json | jq -r .id)
+            CLOUD_ID=$(jq -r .cloud_id key.json)
+            FOLDER_ID=$(jq -r .folder_id key.json)
+
+            yc config set cloud-id $CLOUD_ID
+            yc config set folder-id $FOLDER_ID
             yc config set compute-default-zone $CLUSTER_ZONE
 
         # Добавляем kubeconfig (секретом)    
