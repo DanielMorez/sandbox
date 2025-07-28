@@ -1,0 +1,14 @@
+imagePullPolicy: Always
+revisionHistoryLimit: "15"
+replicas: "1"
+image: arturdzh/sandbox:latest
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "150m"
+  limits:
+    memory: "256Mi"
+    cpu: "300m"
+containerPort: 8000
+
+nodePort: 30000

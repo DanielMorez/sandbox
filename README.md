@@ -102,3 +102,60 @@ sandbox/
 ├── poetry.lock                         # Переменные окружения
 └── README.md
 ```
+
+
+# Особенности деплоя 
+
+Добавлен workflow с реализацией пуша в DockerHub и в кластер kubernetes
+
+
+Kubernetes (Yandex cloud):
+
+Ресурсы разворачиваются посредством Helm:
+
+1. Deployment - backend (FastAPI, поднимает Job)
+2. Service - ClusterIP (обеспечивает доступ к поду с других сервисов)
+3. Ingress - nginx + https + domain
+4. Role + RoleBinding - разрешения запуска Job от имени сервисного аккаунта (default)
+5. ClusterIssuer - получение сертификата от Let`s Encrypt
+
+
+Манифесты применяются автоматически через workflow
+```
+git push
+```
+(перед деплоеем в новый кластер применить kubectl apply -f rbac-ci.yml)
+## Ручной деплой:
+```
+helm upgrade --install sandbox .\sandbox-chart\ -n sandbox
+```
+
+## Проверка работы:
+Пример с ingress + http + домен:
+```
+curl --location 'http://k8s.duginov.courses/api/run/sync' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+    "language": "python",
+    "code": "a, b = 1, 2\nprint(a + b)"
+}'
+```
+
+## Удаление ресурсов:
+```
+helm uninstall sandbox
+```
+
+## Debug:
+
+### **Важно**
+При развертывании на новый кластер для корректной работы приложения необходимо установить ingress-controller с отключением валидации путей (необходимо для HTTP-валидации Lets Encrypt):
+```
+helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
+  --namespace ingress-nginx \
+  --set controller.admissionWebhooks.enabled=false
+```
+Перед деплоем убрать редирект на SSL в ingress.yml (необходимо для HTTP-валидации Lets Encrypt):
+ 'nginx.ingress.kubernetes.io/ssl-redirect: "true"'
+Также предварительно необходимо установить cert-manager для автоматического обновления сертификатов
+
